@@ -1,6 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <%
+    // Si la sesión ha caducado se redirige a la pantalla de login
+    if(session.timeout){
+        session.timeout = false;
+    %>
+      <script>
+        <!--
+        window.location = "/login";
+        -->
+      </script>
+    <%
+    }
+    %>
   <meta charset="utf-8"><title> Preguntas </title>
   <link rel='stylesheet' href='/stylesheets/style.css' />
   <link rel='stylesheet'

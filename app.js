@@ -34,6 +34,25 @@ app.use(function(req, res, next) {
   // guardar path en session.redir para despues de login
   if (!req.path.match(/\/login|\/logout/)) {
     req.session.redir = req.path;
+
+    var limiteLogout = 120000; // milisegundos
+    var horaActual = new Date().getTime();
+
+    if (undefined === req.session.horaUltimaAccion){
+      // Si no se había almacenado hora de última solicitud HTTP en la variable de sesión se guarda ahora
+      req.session.horaUltimaAccion = horaActual;
+    }else{
+      // Hay sesión activa y se ha superado el tiempo de timeout especificado entre solicitudes HTTP
+      if ((req.session.user !== undefined) && ((horaActual - req.session.horaUltimaAccion) > limiteLogout)){
+        // Almacena en las variables de sesión el error de timeout
+        req.session.timeout = true;
+        req.session.errors = [{"message": 'Sesión caducada'}];
+
+        // Elimina la sesión
+        delete req.session.user;
+      }
+      req.session.horaUltimaAccion = horaActual;
+    }
   }
 
   // Hacer visible req.session en las vistas
